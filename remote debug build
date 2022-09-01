@@ -1,0 +1,11 @@
+version: 7.10
+
+1. download elasticsearch-7.10.2 unzipi
+
+2. modify bin/elasticsearch as adding "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006 \"  in line 68
+
+3.start  bin/elasticsearch
+
+5. idea remote debug localhost 5006
+
+
