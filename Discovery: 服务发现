@@ -1,0 +1,81 @@
+Discovery: 服务发现
+
+
+ZenDiscovery
+
+提交线程执行方法innerJoinCluster
+1.找到masterNode
+
+1.1 UnicastZenPing.ping
+
+
+2.1 如果自己就是master
+等待检查是否有满足的其他的候选master的节点
+
+waitToBeElectedAsMaster
+
+接受处理：入口MembershipAction.JoinRequestRequestHandler
+1.建立链接：---TransportService.connectToNode
+2.ElectionContext 加入该节点投票信息，并检查是否超出，能成为主节点
+3.可以，ElectionContext.closeAndBecomeMaster
+3.1主节点阻塞继续
+3.2提交回复其他节点的任务
+
+
+2.2 其他的是master
+joinElectedMaster  加入节点：
+建立链接：---TransportService.connectToNode
+向主节点发送加入申请（如果失败，短暂停留重试,如果网络不好，如果超过重试次数，会返回加入失败）：MembershipAction.sendJoinRequestBlocking
+ --等待主节点返回确认？
+如果申请失败，会重新进行一轮服务发现，步骤1开始
+
+
+
+
+什么时候会触发？
+Node启动时，
+首先执行start，//start before cluster service so that it can set initial state on ClusterApplierService
+然后startInitialJoin
+
+JoinThreadControl
+核心方法：startInitialJoin
+do the join on a different thread, the caller of this method waits for 30s anyhow till it is discovered
+执行一个线程进行发现
+
+
+
+
+NodeJoinController
+startElectionContext
+waitToBeElectedAsMaster
+stopElectionContext
+closeAndBecomeMaster 
+markThreadAsDone
+
+
+
+MembershipAction
+
+
+ElectionContext 
+
+
+MembershipAction.JoinRequestRequestHandler
+
+
+ZenDiscovery.MembershipListener
+
+
+
+ClusterStateTaskListener
+
+UnicastZenPing
+
+SeedHostsProvider 提供列表
+
+验证器？
+
+
+
+
+

@@ -1,0 +1,9 @@
+es bug
+
+
+
+Netty4Transport.ServerChannelInitializer
+
+如果在207行返回的值是 NioServerSocketChannel.class就会报错， ALLOCATOR的值在115行写死了
+
+代码340行

@@ -1,0 +1,110 @@
+Transport:通信
+
+
+transport.type
+
+transport.type.default
+
+
+
+TransportService
+
+
+Transport
+
+
+
+NetworkModule networkModule
+
+由工厂提供对象transportFactories
+
+NetworkPlugin 
+
+Netty4Transport
+
+
+node 中启动
+
+
+
+
+Bootstrap 创建时使用制定了channel Netty4NioSocketChannel  
+实例化会使用clone
+
+
+
+
+服务器端
+1.定义
+node.init()
+取决于插件 Netty4Plugin（ PluginsService 提供插件类型）
+NetworkModule 提供 Transport
+利用Transport 创建 TransportService
+
+
+2.启动服务监听
+node.start
+1.TransportService.start
+2.Netty4Transport.start  （
+2.1 创建 createClientBootstrap  CopyBytesServerSocketChannel
+2.2 创建 createServerBootstrap 并绑定端口，等待链接
+
+
+3.注册处理器
+TransportService提供方法，registerRequestHandler
+
+4 接收处理 acceptor，创建CopyBytesSocketChannel
+
+
+4.1NettyByteBufSizer 
+ESLoggingHandler
+Netty4MessageChannelHandler
+
+
+InboundPipeline.handleBytes
+
+
+
+4.2TcpTransport.inboundMessage
+
+InboundHandler.inboundMessage判断接收到消息是请求还是响应
+
+handleRequest
+
+4.3 RequestHandlerRegistry<T> reg = requestHandlers.getHandler(action);
+RequestHandlerRegistry.processMessageReceived  
+TransportRequestHandler.messageReceived
+
+
+
+5.处理信息
+
+6.返回消息
+
+TcpTransportChannel.sendResponse
+带上reqeust
+
+
+
+客户端
+
+初始化，连接
+
+TransportService.openConnection(final DiscoveryNode node, ConnectionProfile connectionProfile)
+
+ClusterConnectionManager.openConnection  (添加监听器ActionListener)
+
+Netty4Transport.openConnection  创建连接池
+
+
+
+发送信息
+
+Transport.ResponseHandlers中维护了requestId,  以及对request的响应 TransportResponseHandler
+
+
+
+接收返回
+
+
+
